@@ -1,0 +1,702 @@
+{
+	"info": {
+		"_postman_id": "8c1c62b5-9bc8-483e-ad1e-94f4a10b8a7a",
+		"name": "Poc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1828232"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Account",
+					"item": [
+						{
+							"name": "Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var data = JSON.parse(responseBody)\r",
+											"\r",
+											"pm.environment.set('accessToken', data.accessToken)\r",
+											"pm.environment.set('refreshToken', data.refreshToken)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"teste@teste.com\",\n    \"password\": \"Teste@123\"\n}"
+								},
+								"url": {
+									"raw": "{{gateway}}/auth-service/account/login",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"auth-service",
+										"account",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refresh Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var data = JSON.parse(responseBody)\r",
+											"\r",
+											"pm.environment.set('accessToken', data.accessToken)\r",
+											"pm.environment.set('refreshToken', data.refreshToken)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
+								},
+								"url": {
+									"raw": "{{gateway}}/auth-service/account/refresh",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"auth-service",
+										"account",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let email = pm.environment.replaceIn('{{$randomEmail}}');\r",
+											"\r",
+											"pm.environment.set('emailRegister', email);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "*/*"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"teste@teste.com\",\n    \"password\": \"Teste@123\",\n    \"confirmPassword\": \"Teste@123\"\n}"
+								},
+								"url": {
+									"raw": "{{gateway}}/auth-service/account/register",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"auth-service",
+										"account",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Manage",
+					"item": [
+						{
+							"name": "2FA",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"enable\": true,\n    \"twoFactorCode\": \"twoFactorCode\",\n    \"resetSharedKey\": false,\n    \"resetRecoveryCodes\": true,\n    \"forgetMachine\": true\n}"
+								},
+								"url": {
+									"raw": "{{gateway}}/auth-service/manage/2fa",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"auth-service",
+										"manage",
+										"2fa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Data",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{gateway}}/auth-service/manage/user",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"auth-service",
+										"manage",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change User",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"phoneNumber\": \"99999999999\",\r\n    \"privateProfile\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gateway}}/auth-service/manage/changeUser",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"auth-service",
+										"manage",
+										"changeUser"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Email",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newEmail\": \"teste@testes.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gateway}}/auth-service/manage/changeEmail",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"auth-service",
+										"manage",
+										"changeEmail"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change Password",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"oldPassword\": \"Teste@234\",\r\n    \"newPassword\": \"Teste@123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gateway}}/auth-service/manage/changePassword",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"auth-service",
+										"manage",
+										"changePassword"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{gateway}}/admin-service/home",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"admin-service",
+								"home"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{gateway}}/admin-service/home/user",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"admin-service",
+								"home",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{gateway}}/admin-service/home/admin",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"admin-service",
+								"home",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Catalog",
+			"item": [
+				{
+					"name": "Get",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{gateway}}/catalog-service/home",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"catalog-service",
+								"home"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "Create Order",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"order\": {\r\n        \"amount\": 10.99,\r\n        \"installments\": 1,\r\n        \"tokenCard\": \"1B97DF20CA6C4240838CDB141B884233\",\r\n        \"description\": \"{{$randomWord}}\",\r\n        \"paymentMethodId\": \"CreditCard\",\r\n        \"paymentId\": \"{{$randomInt}}\",\r\n        \"idempotencyKey\": \"{{$guid}}\",\r\n        \"payer\": {\r\n            \"firstName\": \"{{$randomFirstName}}\",\r\n            \"lastName\": \"{{$randomLastName}}\",\r\n            \"email\": \"{{$randomEmail}}\",\r\n            \"identification\": {\r\n                \"type\": \"CPF\",\r\n                \"number\": \"12345678999\"\r\n            }\r\n        }\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{gateway}}/payment-service/order",
+							"host": [
+								"{{gateway}}"
+							],
+							"path": [
+								"payment-service",
+								"order"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "CreditCard",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "*/*"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"order\": {\n        \"amount\": 10.99,\n        \"installments\": 1,\n        \"tokenCard\": \"1B97DF20CA6C4240838CDB141B884233\",\n        \"description\": \"{{$randomWord}}\",\n        \"paymentMethodId\": \"CreditCard\",\n        \"paymentId\": \"{{$randomInt}}\",\n        \"idempotencyKey\": \"{{$guid}}\",\n        \"payer\": {\n            \"firstName\": \"{{$randomFirstName}}\",\n            \"lastName\": \"{{$randomLastName}}\",\n            \"email\": \"{{$randomEmail}}\",\n            \"identification\": {\n                \"type\": \"CPF\",\n                \"number\": \"12345678999\"\n            }\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gateway}}/payment-service/order",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"payment-service",
+										"order"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "PIX",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "*/*"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"order\": {\n        \"amount\": 10.99,\n        \"installments\": 1,\n        \"description\": \"{{$randomWord}}\",\n        \"paymentMethodId\": \"PIX\",\n        \"paymentId\": \"{{$randomInt}}\",\n        \"userId\": \"{{$guid}}\",\n        \"idempotencyKey\": \"{{$guid}}\",\n        \"payer\": {\n            \"email\": \"{{$randomEmail}}\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{gateway}}/payment-service/order",
+									"host": [
+										"{{gateway}}"
+									],
+									"path": [
+										"payment-service",
+										"order"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		}
+	]
+}

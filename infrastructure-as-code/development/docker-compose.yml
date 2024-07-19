@@ -1,0 +1,58 @@
+version: '3.4'
+networks:
+  dev-network:
+    name: dev-network
+    driver: bridge
+
+services:
+  poc.gateway:
+    image: ${DOCKER_REGISTRY-}pocgateway
+    build:
+      context: ../..
+      dockerfile: src/Gateway/Poc.Gateway/Dockerfile
+
+  poc.auth:
+    image: ${DOCKER_REGISTRY-}pocauth
+    build:
+      context: ../..
+      dockerfile: src/Services/Auth/Poc.Auth/Dockerfile
+
+  poc.admin:
+    image: ${DOCKER_REGISTRY-}pocadmin
+    build:
+      context: ../..
+      dockerfile: src/Services/Admin/Poc.Admin/Dockerfile
+
+  poc.payment:
+    image: ${DOCKER_REGISTRY-}pocpayment
+    build:
+      context: ../..
+      dockerfile: src/Services/Payment/Poc.Payment/Dockerfile
+
+  poc.catalog:
+    image: ${DOCKER_REGISTRY-}poccatalog
+    build:
+      context: ../..
+      dockerfile: src/Services/Catalog/Poc.Catalog/Dockerfile
+
+  poc.web:
+    image: ${DOCKER_REGISTRY-}pocweb
+    build:
+      context: ../..
+      dockerfile: src/Web/Poc.Web/Dockerfile
+
+  pocdb:
+    container_name: pocdb
+    image: postgres
+
+  messagebroker:
+    container_name: messagebroker
+    image: rabbitmq:management
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+
+volumes:
+  postgres_poc:
+

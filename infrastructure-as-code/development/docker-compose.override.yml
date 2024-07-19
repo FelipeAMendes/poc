@@ -1,0 +1,159 @@
+version: '3.4'
+
+services:
+  poc.gateway:
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+    depends_on:
+      - poc.auth
+      - poc.admin
+      - poc.payment
+      - poc.catalog
+    ports:
+      - "8080:80"
+    networks:
+      - dev-network
+
+  poc.auth:
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__Database=${ConnectionStrings__Auth}
+      - Auth__TokenKey=${Auth__TokenKey}
+      - Auth__RefreshTokenKey=${Auth__RefreshToken}
+      - Auth__Audience=${Auth__Audience}
+      - Auth__Issuer=${Auth__Issuer}
+      - ApiSettings__WebUrl=${ApiSettings__WebUrl}
+    depends_on:
+      - pocdb
+    ports:
+      - "80"
+    networks:
+      - dev-network
+
+  poc.admin:
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__Database=${ConnectionString__Admin}
+      - ConnectionStrings__NoSqlDatabase=${ConnectionStrings__NoSql}
+      - MessageBroker__Host=${MessageBroker__Host}
+      - MessageBroker__UserName=${MessageBroker__Username}
+      - MessageBroker__Password=${MessageBroker__Password}
+      - ApiSettings__GatewayUrl=${ApiSettings__GatewayUrl}
+      - ApiSettings__AuthUrl=${ApiSettings__AuthUrl}
+      - Auth__TokenKey=${Auth__TokenKey}
+      - Auth__Audience=${Auth__Audience}
+      - Auth__Issuer=${Auth__Issuer}
+    depends_on:
+      - pocdb
+      - messagebroker
+      - mongodb
+    ports:
+      - "80"
+    networks:
+      - dev-network
+
+  poc.payment:
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__Database=${ConnectionStrings__Payment}
+      - MessageBroker__Host=${MessageBroker__Host}
+      - MessageBroker__UserName=${MessageBroker__Username}
+      - MessageBroker__Password=${MessageBroker__Password}
+      - ApiSettings__GatewayUrl=${ApiSettings__GatewayUrl}
+      - ApiSettings__AuthUrl=${ApiSettings__AuthUrl}
+      - Auth__TokenKey=${Auth__TokenKey}
+      - Auth__Audience=${Auth__Audience}
+      - Auth__Issuer=${Auth__Issuer}
+    depends_on:
+      - pocdb
+      - messagebroker
+    ports:
+      - "80"
+    networks:
+      - dev-network
+
+  poc.catalog:
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__NoSqlDatabase=${ConnectionStrings__NoSql}
+    depends_on:
+      - mongodb
+    ports:
+      - "80"
+    networks:
+      - dev-network
+
+  poc.web:
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - ApiSettings__GatewayUrl=${ApiSettings__GatewayUrl}
+      - ApiSettings__AuthUrl=${ApiSettings__AuthUrl}
+      - Auth__TokenKey=${Auth__TokenKey}
+      - Auth__Audience=${Auth__Audience}
+      - Auth__Issuer=${Auth__Issuer}
+    depends_on:
+      - poc.gateway
+    ports:
+      - "5005:80"
+    networks:
+      - dev-network
+
+  pocdb:
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${Database__Username}
+      - POSTGRES_PASSWORD=${Database__Password}
+      - POSTGRES_DB=${Database__Name}
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_poc:/var/lib/postgresql/data/
+    networks:
+      - dev-network
+
+  messagebroker:
+    env_file:
+      - .env
+    hostname: poc-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${Messaging__Username}
+      - RABBITMQ_DEFAULT_PASS=${Messaging__Password}
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - dev-network
+
+  mongodb:
+    env_file:
+      - .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${NoSqlDatabase__Username}
+      - MONGO_INITDB_ROOT_PASSWORD=${NoSqlDatabase__Password}
+    ports:
+      - "27017:27017"
+    volumes:
+      - /data:/data/db
+    networks:
+      - dev-network

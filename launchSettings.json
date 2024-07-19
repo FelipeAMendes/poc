@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "poc.admin": "StartDebugging",
+        "poc.gateway": "StartWithoutDebugging",
+        "poc.auth": "StartWithoutDebugging",
+        "poc.payment": "StartWithoutDebugging",
+        "poc.catalog": "StartWithoutDebugging",
+        "poc.web": "StartWithoutDebugging"
+      }
+    }
+  }
+}
