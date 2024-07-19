@@ -1,0 +1,6 @@
+@Poc.Catalog_HostAddress = http://localhost:5144
+
+GET {{Poc.Catalog_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
