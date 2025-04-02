@@ -51,13 +51,9 @@ public static class DependencyInjection
         }
 
         app.UseExceptionHandler(options => { });
-
         app.UseAuthentication();
-
         app.UseRouting();
-
         app.UseAuthorization();
-
         app.MapControllers();
 
         return app;
